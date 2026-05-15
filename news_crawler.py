@@ -1,49 +1,45 @@
 import os
 import requests
-from bs4 import BeautifulSoup
+import feedparser
 from dotenv import load_dotenv
+from datetime import datetime
 
 # .env 파일로부터 환경변수를 로드합니다.
 load_dotenv()
 
-def crawl_zdnet_ai():
-    """지디넷 코리아 AI 섹션에서 최신 뉴스 5개를 크롤링합니다."""
-    url = "https://zdnet.co.kr/news/?lst=010100&sub=010101"
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-    }
+RSS_FEEDS: dict[str, str] = {
+    "Anthropic":        "https://www.anthropic.com/rss.xml",
+    "OpenAI":           "https://openai.com/news/rss.xml",
+    "Google DeepMind":  "https://deepmind.google/blog/rss.xml",
+    "Hugging Face":     "https://huggingface.co/blog/feed.xml",
+    "TechCrunch AI":    "https://techcrunch.com/category/artificial-intelligence/feed/",
+    "The Verge AI":     "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml",
+    "MIT Tech Review":  "https://www.technologyreview.com/feed/",
+    "Ars Technica":     "https://feeds.arstechnica.com/arstechnica/technology-lab",
+}
+
+def fetch_rss_news():
+    """설정된 RSS 피드에서 최신 뉴스를 가져옵니다."""
+    all_news = []
     
-    try:
-        response = requests.get(url, headers=headers)
-        response.raise_for_status()
-        
-        soup = BeautifulSoup(response.text, 'html.parser')
-        
-        # h3 태그를 먼저 찾고 그 부모 a 태그에서 링크를 추출
-        h3_tags = soup.find_all('h3')
-        
-        news_list = []
-        for h3 in h3_tags:
-            if len(news_list) >= 5:
-                break
-                
-            title = h3.get_text(strip=True)
-            link_tag = h3.find_parent('a')
+    for source, url in RSS_FEEDS.items():
+        print(f"[{source}] 뉴스 가져오는 중...")
+        try:
+            feed = feedparser.parse(url)
             
-            if link_tag and 'href' in link_tag.attrs:
-                link = link_tag['href']
-                # 절대 경로 확인 및 추가
-                if not link.startswith('http'):
-                    link = f"https://zdnet.co.kr{link}"
-                
-                # 중복 제거 및 유효한 뉴스 링크인지 확인 (view 포함 여부 등)
-                if '/view/' in link and not any(n['link'] == link for n in news_list):
-                    news_list.append({"title": title, "link": link})
-        
-        return news_list
-    except Exception as e:
-        print(f"Error during crawling: {e}")
-        return []
+            # 각 소스별로 최신 뉴스 3개씩 추출
+            for entry in feed.entries[:3]:
+                news_item = {
+                    "source": source,
+                    "title": entry.title,
+                    "link": entry.link,
+                    "published": entry.get("published", "No Date")
+                }
+                all_news.append(news_item)
+        except Exception as e:
+            print(f"Error fetching from {source}: {e}")
+            
+    return all_news
 
 def send_slack_message(news_list):
     """슬랙 웹훅을 통해 뉴스 리스트를 전송합니다."""
@@ -63,19 +59,31 @@ def send_slack_message(news_list):
             "type": "header",
             "text": {
                 "type": "plain_text",
-                "text": "🚀 지디넷 코리아 AI 최신 뉴스",
+                "text": "🌐 AI Tech News Update",
                 "emoji": True
             }
         },
         {"type": "divider"}
     ]
     
-    for i, news in enumerate(news_list, 1):
+    # 소스별로 그룹화하여 표시하거나 리스트로 표시
+    current_source = ""
+    for news in news_list:
+        if current_source != news['source']:
+            current_source = news['source']
+            blocks.append({
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": f"*[{current_source}]*"
+                }
+            })
+            
         blocks.append({
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f"{i}. *<{news['link']}|{news['title']}>*"
+                "text": f"• <{news['link']}|{news['title']}>"
             }
         })
 
@@ -89,14 +97,11 @@ def send_slack_message(news_list):
         print(f"Error sending slack message: {e}")
 
 if __name__ == "__main__":
-    print("지디넷 코리아 AI 뉴스 크롤링 시작...")
-    latest_news = crawl_zdnet_ai()
+    print("AI 기술 뉴스 RSS 크롤링 시작...")
+    latest_news = fetch_rss_news()
     
     if latest_news:
         print(f"성공적으로 {len(latest_news)}개의 뉴스를 가져왔습니다.")
-        for idx, news in enumerate(latest_news, 1):
-            print(f"{idx}. {news['title']} ({news['link']})")
-        
         send_slack_message(latest_news)
     else:
-        print("뉴스를 가져오는 데 실패했습니다. 선택자 또는 페이지 구조를 확인해주세요.")
+        print("뉴스를 가져오는 데 실패했습니다.")
