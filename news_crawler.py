@@ -2,7 +2,6 @@ import os
 import requests
 import feedparser
 from dotenv import load_dotenv
-from datetime import datetime
 
 # .env 파일로부터 환경변수를 로드합니다.
 load_dotenv()
