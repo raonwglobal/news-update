@@ -1,43 +1,18 @@
-```yaml
-name: Daily Tech News Digest
+```
+# Logs and temp files
+*.log
+*.tmp
+*.swp
 
-on:
-  schedule:
-    # Run every day at 9 AM UTC (adjust as needed)
-    - cron: '0 9 * * *'
-  workflow_dispatch: # Allow manual trigger
+# Environment
+.env
+.env.local
+*.env.*
 
-jobs:
-  send-newsletter:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+# Editors
+.vscode/
+.idea/
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install feedparser requests
-
-      - name: Run news fetcher script
-        run: python scripts/fetch_news.py
-        env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-
-      - name: Commit and push if there are changes
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add -A
-          if [[ $(git status -s) ]]; then
-            git commit -m "Update daily tech news digest [skip ci]"
-            git push
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+# Original rules preserved
+*.log
 ```
