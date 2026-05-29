@@ -49,7 +49,6 @@ lark==1.2.2
 # libcomps - Removed: Fedora/RHEL specific package not available on PyPI
 # libdnf - Removed: Fedora/RHEL specific package not available on PyPI
 # libdnf5 - Removed: Fedora/RHEL specific package not available on PyPI
-libpass==1.9.3
 lockfile==0.12.2
 lxml==6.0.2
 MarkupSafe==3.0.2
@@ -63,7 +62,7 @@ packaging==25.0
 pandas==3.0.1
 pandas-datareader==0.10.0
 parsedatetime==2.6
-passlib==1.9.3
+passlib==1.7.4
 # pcp - Removed: Fedora/RHEL specific package not available on PyPI
 peewee==4.0.1
 pexpect==4.9.0
@@ -78,7 +77,6 @@ pycares==5.0.1
 pycparser==2.22
 pycurl==7.45.7
 Pygments==2.19.2
-PyGObject==3.56.2
 pyOpenSSL==26.1.0
 pyRFC3339==2.0.1
 pyroute2==0.7.12
@@ -109,7 +107,6 @@ soupsieve==2.8.3
 specfile==0.40.2
 SQLAlchemy==2.0.49
 # systemd-python - Removed: Fedora/RHEL specific package not available on PyPI
-templated-dictionary==1.6
 typing_extensions==4.15.0
 tzlocal==5.3.1
 urllib3==2.6.3
