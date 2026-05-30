@@ -4,6 +4,8 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+*.egg-info/
+.eggs/
 .venv/
 venv/
 .env
@@ -11,18 +13,17 @@ venv/
 .env.*
 
 # Build artifacts
-dist/
 build/
-*.egg-info/
+dist/
+*.egg
+*.whl
+*.so
+*.dylib
+*.dll
 
 # Logs and temporary files
 *.log
 *.tmp
-*.swp
-
-# Editors
-.vscode/
-.idea/
 *.swp
 *.swo
 
@@ -31,7 +32,13 @@ build/
 coverage/
 htmlcov/
 
-# Testing
-.pytest_cache/
-.mypy_cache/
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
 ```
