@@ -1,44 +1,4 @@
 ```
-# Dependencies
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.egg-info/
-.eggs/
-.venv/
-venv/
-.env
-.env.local
-.env.*
-
-# Build artifacts
-build/
-dist/
-*.egg
-*.whl
-*.so
-*.dylib
-*.dll
-
-# Logs and temporary files
-*.log
-*.tmp
-*.swp
-*.swo
-
-# Coverage
-.coverage
-coverage/
-htmlcov/
-
-# Editors
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS
-.DS_Store
-Thumbs.db
+# CI/CD
+.github/
 ```
