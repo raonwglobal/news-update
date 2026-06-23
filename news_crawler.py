@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 RSS_FEEDS: dict[str, str] = {
+    # Global AI Tech News
     "Anthropic":        "https://www.anthropic.com/rss.xml",
     "OpenAI":           "https://openai.com/news/rss.xml",
     "Google DeepMind":  "https://deepmind.google/blog/rss.xml",
@@ -15,6 +16,10 @@ RSS_FEEDS: dict[str, str] = {
     "The Verge AI":     "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml",
     "MIT Tech Review":  "https://www.technologyreview.com/feed/",
     "Ars Technica":     "https://feeds.arstechnica.com/arstechnica/technology-lab",
+    
+    # Korean News Sources (Google News Korea RSS)
+    "Korea Tech News":  "https://news.google.com/rss/search?q=technology+when:7d&hl=ko&gl=KR&ceid=KR:ko",
+    "Korea AI News":    "https://news.google.com/rss/search?q=인공지능+when:7d&hl=ko&gl=KR&ceid=KR:ko",
 }
 
 def fetch_rss_news():
@@ -58,7 +63,7 @@ def send_slack_message(news_list):
             "type": "header",
             "text": {
                 "type": "plain_text",
-                "text": "🌐 AI Tech News Update",
+                "text": "🌐 AI Tech News Update (Global + Korea)",
                 "emoji": True
             }
         },
